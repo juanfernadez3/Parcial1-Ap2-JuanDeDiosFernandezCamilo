@@ -14,7 +14,7 @@ namespace Parcial1_Ap2_JuanDeDiosFernandezCamilo.Dal
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite(@"Data source = DB/Articulos.db");
+            optionsBuilder.UseSqlite(@"Data source = Data/Articulos.db");
         }
     }
 }
