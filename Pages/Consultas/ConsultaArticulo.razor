@@ -1,0 +1,152 @@
+﻿@page "/ConsultaArticulos"
+@using Parcial1_Ap2_JuanDeDiosFernandezCamilo.Models;
+@using Parcial1_Ap2_JuanDeDiosFernandezCamilo.BLL;
+@inject IToastService toast
+
+<h3>Consulta Articulos</h3>
+
+
+
+<select @bind="opcion" class="form-control">
+    <option value="0">Eliga el criterio</option>
+    <option value="1">Id</option>
+    <option value="2">Descripción</option>
+    <option value="3">Inventario</option>
+    <option value="4">Costo</option>
+    <option value="5">Valor Inventario</option>
+</select>
+
+
+<div class="input-group">
+    <br />
+    <input type="text" @bind="criterio" class="form-control" />
+    <div class=" input-group-append">
+        <button class="btn btn-primary" @onclick="Consultar">
+            <span class="oi oi-zoom-in"></span> Consultar
+        </button>
+        <input type="text" @bind="total" class="form-control" readonly />
+    </div>
+</div>
+
+<br />
+
+@if (lista == null)
+{
+    <h3>Aun no se ha ingredado Articulos</h3>
+}
+else
+{
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>articuloId</th>
+            <th>Descripcion</th>
+            <th>Inventario</th>
+            <th>Costo</th>
+            <th>Valor inventario</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var li in lista)
+        {
+            <tr>
+                <td>@li.ArtiuloId</td>
+                <td>@li.Descripcion</td>
+                <td>@li.Inventario</td>
+                <td>@li.Costo</td>
+                <td>@li.ExistenciaInventario</td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
+
+@code {
+
+    List<Articulos> lista = new List<Articulos>();
+    private string opcion;
+    private string criterio = string.Empty;
+    private decimal total = 0;
+
+    protected override void OnInitialized()
+    {
+        lista = ArticulosBLL.GetList(x => true);
+        TotalValorInventario();
+    }
+
+    private void Consultar()
+    {
+        int op = Convert.ToInt32(opcion);
+
+        if (criterio.Trim().Length > 0 && criterio != string.Empty)
+        {
+            switch (op)
+            {
+
+                case 1:
+                    int id = int.Parse(criterio);
+                    lista = ArticulosBLL.GetList(x => x.ArtiuloId == id);
+                    total = 0;
+                    TotalValorInventario();
+                    break;
+
+                case 2:
+                    lista = ArticulosBLL.GetList(x => x.Descripcion == criterio);
+                    total = 0;
+                    TotalValorInventario();
+                    break;
+
+                case 3:
+                    int inv = int.Parse(criterio);
+                    lista = ArticulosBLL.GetList(x => x.Inventario == inv);
+                    total = 0;
+                    TotalValorInventario();
+                    break;
+
+                case 4:
+                    int cost = int.Parse(criterio);
+                    lista = ArticulosBLL.GetList(x => x.Costo == cost);
+                    total = 0;
+                    TotalValorInventario();
+                    break;
+
+                case 5:
+                    int val = int.Parse(criterio);
+                    lista = ArticulosBLL.GetList(x => x.ExistenciaInventario == val);
+                    total = 0;
+                    TotalValorInventario();
+                    break;
+
+                default:
+                    toast.ShowError("ERROR");
+                    total = 0;
+                    TotalValorInventario();
+                    break;
+            }
+        }
+        else if (string.IsNullOrEmpty(criterio))
+        {
+            lista = ArticulosBLL.GetList(x => true);
+            total = 0;
+            TotalValorInventario();
+        }
+        else
+        {
+            lista = ArticulosBLL.GetList(x => true);
+            total = 0;
+            TotalValorInventario();
+        }
+
+    }
+
+    private void TotalValorInventario()
+    {
+        foreach (var item in lista)
+        {
+            total += item.ExistenciaInventario;
+        }
+    }
+}

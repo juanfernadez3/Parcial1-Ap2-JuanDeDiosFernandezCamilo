@@ -16,10 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\Consultas\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Data\Articulos.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
