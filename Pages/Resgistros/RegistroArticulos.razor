@@ -1,0 +1,162 @@
+﻿@page "/RegistroArticulos"
+@using Parcial1_Ap2_JuanDeDiosFernandezCamilo.Models;
+@using Parcial1_Ap2_JuanDeDiosFernandezCamilo.BLL;
+@inject IToastService toast
+
+
+<EditForm Model="articulos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class=" card">
+
+        <div class="card-header">
+            <h3>Registro Articulos</h3>
+        </div>
+
+        <div class="card-body">
+            <form>
+
+                @*Articulo Id*@
+                <div class=" form-row aling-intems-center">
+                    <div class=" col">
+                        <div class="form-group">
+                            <label>
+                                PersonaId
+                            </label>
+                            <div class="input-group">
+                                <InputNumber @bind-Value="articulos.ArtiuloId" class="form-control col-4" />
+                                <div class=" input-group-append">
+                                    <button type="button" class=" btn btn-primary input-group-text" @onclick="Buscar">
+                                        <span class="oi oi-zoom-in"></span> Buscar
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                @*Descripcion*@
+                <div class="form-group">
+                    <label>
+                        Descripción
+                    </label>
+                    <InputText @bind-Value="articulos.Descripcion" class="form-control"></InputText>
+                    <small class="text-muted">
+                        Inserte la Descripción Del Producto
+                    </small>
+                </div>
+
+                @*Inventario*@
+                <div class="form-group">
+                    <label>
+                        Inventario
+                    </label>
+                    <InputNumber @bind-Value="articulos.Inventario" @onfocusout="ActualizarValorInventario" class="form-control"></InputNumber>
+                    <small class="text-muted">
+                        Inserte Inventaro
+                    </small>
+                </div>
+
+                @*Costos*@
+                <div class="form-group">
+                    <label>
+                        Costos
+                    </label>
+                    <InputNumber @bind-Value="articulos.Costo" class="form-control" @onfocusout="ActualizarValorInventario"></InputNumber>
+                    <small class="text-muted">
+                        Inserte El Costo del Producto
+                    </small>
+                </div>
+
+                @*Existencia Inventario*@
+                <div class="form-group">
+                    <label>
+                        Valor Inventario
+                    </label>
+                    <InputNumber @bind-Value="articulos.ExistenciaInventario" class=" form-control" readOnly></InputNumber>
+                    <small class="text-muted"> Inserte El Costo</small>
+                </div>
+
+            </form>
+
+        </div>
+
+        <div class="card-footer">
+            <div class="form-group text-center" display: inLine:block>
+                <button class="btn btn-primary" @onclick="Nuevo">
+                    <span class="oi oi-plus"></span> Nuevo
+                </button>
+
+                <button class="btn btn-success" type="submit">
+                    <span class="oi oi-clipboard"></span> Guardar
+                </button>
+
+                <button class="btn btn-danger" @onclick="Eliminar">
+                    <span class="oi oi-trash"></span> Eliminar
+                </button>
+            </div>
+        </div>
+
+    </div>
+</EditForm>
+
+
+@code {
+    Articulos articulos = new Articulos();
+    public decimal valor = 0;
+    protected override void OnInitialized()
+    {
+        Nuevo();
+        Buscar();
+    }
+
+    private void Nuevo()
+    {
+        articulos = new Articulos();
+    }
+
+    private void Buscar()
+    {
+        if (articulos.ArtiuloId > 0)
+        {
+            var encontrado = ArticulosBLL.Buscar(articulos.ArtiuloId);
+            if (encontrado != null)
+                this.articulos = encontrado;
+            else
+                toast.ShowWarning("No encontrado");
+        }
+    }
+
+    private void Guardar()
+    {
+        bool guardo;
+        guardo = ArticulosBLL.Guardar(articulos);
+
+        if (guardo)
+        {
+            Nuevo();
+            toast.ShowSuccess("Guardado!!!!");
+        }
+        else
+            toast.ShowWarning("No guardo");
+    }
+
+    private void Eliminar()
+    {
+        bool eliminado = ArticulosBLL.Eliminar(articulos.ArtiuloId);
+
+        if (eliminado)
+        {
+            Nuevo();
+            toast.ShowSuccess("Eliminado");
+        }
+        else
+            toast.ShowWarning("No eliminado");
+    }
+
+    private void ActualizarValorInventario()
+    {
+        this.articulos.ExistenciaInventario = (articulos.Costo * articulos.Inventario);
+    }
+
+}

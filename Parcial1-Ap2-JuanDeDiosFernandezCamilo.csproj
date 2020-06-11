@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <Folder Include="Pages\Consultas\" />
-    <Folder Include="Pages\Resgistros\" />
   </ItemGroup>
 
   <ItemGroup>
